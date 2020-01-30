@@ -72,6 +72,11 @@ spec:
         secret:
           secretName: {{ .Values.emqxAuthConfig | quote }}
       {{- end }}
+      {{- if .Values.emqxPluginConfig  }}
+      - name: emqx-plugins
+        secret:
+          secretName: {{ .Values.emqxPluginConfig | quote }}
+      {{- end }}
       serviceAccountName:  {{ include "emqx.fullname" . }}
       securityContext:
         fsGroup: 1000
@@ -125,10 +130,15 @@ spec:
           {{ if .Values.emqxAuthConfig  }}
           #username|password - etc/plugins/emqx_auth_username.conf
           #id | password - etc/plugins/emqx_auth_clientid.conf
-          #http auth - etc/plugins/emqx_auth_http.conf 
+          #http auth - etc/plugins/emqx_auth_http.conf
           - name: emqx-auth
             mountPath: /opt/emqx/etc/plugins/emqx_auth_username.conf
             subPath: emqx_auth_username.conf
+          {{ end }}
+          {{ if .Values.emqxPluginConfig  }}
+          - name: emqx-plugins
+            mountPath: /opt/emqx/data/loaded_plugins
+            subPath: loaded_plugins
           {{ end }}
           readinessProbe:
             httpGet:
