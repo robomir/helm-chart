@@ -52,17 +52,17 @@ emqxLicneseSecretName:
 
 ## If you want to manipulate the ACLs you can manually create a secret and assign the name as a value to emqxAclConfig
 ## Example:
-##   kubectl -n your_namespace create secret generic emqx-scl-config --from-file=acl.conf=acl.conf.txt
+##   kubectl -n your_namespace create secret generic emqx-scl-config --from-file=acl.conf=/path/to/file/emqx_acl.conf
 ##emqxAclConfig: emqx-acl-config
 
 ## In order to manage user/passwords for MQTT service you may screate a secret and assign the name as a value to emqxAuthConfig
 ## Example:
-##   kubectl -n your_namespace create secret generic emqx-userpass-config --from-file=emqx_auth_username.conf=auth.conf.txt
+##   kubectl -n your_namespace create secret generic emqx-userpass-config --from-file=emqx_auth_username.conf=/path/to/file/emqx_auth.conf
 emqxAuthConfig: emqx-auth-config
 
 ## In order to manage plugins startup in EMQX you must screate a secret and assign the name as a value to emqxPluginConfig
 ## Example:
-##   kubectl -n your_namespace create secret generic emqx-userpass-config --from-file=emqx_auth_username.conf=auth.conf.txt
+##   kubectl -n your_namespace create secret generic emqx-plugin-config --from-file=loaded_plugins=/path/to/file/emqx_loaded.plugins
 emqxPluginConfig: emqx-plugin-config
 
 ## Service type - ClusterIP ; LoadBalancer (Internal)
