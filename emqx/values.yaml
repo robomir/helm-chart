@@ -53,14 +53,19 @@ emqxLicneseSecretName:
 ## If you want to manipulate the ACLs you can manually create a secret and assign the name as a value to emqxAclConfig
 ## Example:
 ##   kubectl -n your_namespace create secret generic emqx-scl-config --from-file=acl.conf=acl.conf.txt
-#emqxAclConfig: emqx-acl-config
+##emqxAclConfig: emqx-acl-config
 
-## In order to manage user/passwords for MQTT service you may screate a secret and assign the name as a value to emqxUserPass
+## In order to manage user/passwords for MQTT service you may screate a secret and assign the name as a value to emqxAuthConfig
 ## Example:
 ##   kubectl -n your_namespace create secret generic emqx-userpass-config --from-file=emqx_auth_username.conf=auth.conf.txt
 emqxAuthConfig: emqx-auth-config
 
-## Service type - ClusterIP ; LoadBalancer and etc...
+## In order to manage plugins startup in EMQX you must screate a secret and assign the name as a value to emqxPluginConfig
+## Example:
+##   kubectl -n your_namespace create secret generic emqx-userpass-config --from-file=emqx_auth_username.conf=auth.conf.txt
+emqxPluginConfig: emqx-plugin-config
+
+## Service type - ClusterIP ; LoadBalancer (Internal)
 service:
   type: LoadBalancer
 
@@ -71,7 +76,7 @@ tolerations: []
 
 affinity: {}
 
-#Ingress is only enabled for the Dashboard all other services are accessible trough the SVC IP/DNS Name only!
+## Ingress is only enabled for the Dashboard all other services are accessible trough the SVC IP/DNS Name only!
 ingress:
   enabled: true
   annotations:
