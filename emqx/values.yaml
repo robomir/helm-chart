@@ -1,0 +1,86 @@
+## Default values for emqx.
+## This is a YAML-formatted file.
+## Declare variables to be passed into your templates.
+
+## It is recommended to have odd number of nodes in a cluster, otherwise the emqx cluster cannot be automatically healed in case of net-split.
+replicaCount: 5
+image:
+  repository: emqx/emqx
+  pullPolicy: IfNotPresent
+
+persistence:
+  enabled: true
+  size: 20Mi
+  ## If defined, volume.beta.kubernetes.io/storage-class: <storageClass>
+  ## Default: volume.alpha.kubernetes.io/storage-class: default
+  # storageClass: "-"
+  accessMode: ReadWriteOnce
+  ## Existing PersistentVolumeClaims
+  ## The value is evaluated as a template
+  ## So, for example, the name can depend on .Release or .Chart
+  # existingClaim: ""
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 500m
+    memory: 256Mi
+
+## EMQX configuration item, see the documentation (https://github.com/emqx/emqx-docker#emq-x-configuration)
+emqxConfig:
+  #Clouster discovery strategy | manual | static | mcast | dns | etcs | k8s
+  EMQX_CLUSTER__K8S__DISCOVERY: k8s
+  #List of Kubernetes API servers, separated by ,:
+  EMQX_CLUSTER__K8S__APISERVER: "https://kubernetes.default.svc.cluster.local:443"
+  ## The address type is used to extract host from k8s service.
+  ## Value: ip | dns | hostname
+  ## Note：Hostname is only supported after v4.0-rc.2
+  EMQX_CLUSTER__K8S__ADDRESS_TYPE: "ip"
+  ## if EMQX_CLUSTER__K8S__ADDRESS_TYPE eq dns
+  # EMQX_CLUSTER__K8S__SUFFIX: "pod.cluster.local"
+  #Services DNS sufix:
+  EMQX_CLUSTER__K8S__SUFFIX: "svc.cluster.local"
+  #EMQ X node name:
+  EMQX_CLUSTER__K8S__APP_NAME: emqx
+
+## EMQX Enterprise Edition requires manual creation of a Secret containing the licensed content. Write the name of Secret to the value of "emqxLicneseSecretName"
+## Example:
+##   kubectl create secret generic emqx-license-secret-name --from-file=/path/to/emqx.lic
+emqxLicneseSecretName:
+
+## If you want to manipulate the ACLs you can manually create a secret and assign the name as a value to emqxAclConfig
+## Example:
+##   kubectl -n your_namespace create secret generic emqx-scl-config --from-file=acl.conf=acl.conf.txt
+#emqxAclConfig: emqx-acl-config
+
+## In order to manage user/passwords for MQTT service you may screate a secret and assign the name as a value to emqxUserPass
+## Example:
+##   kubectl -n your_namespace create secret generic emqx-userpass-config --from-file=emqx_auth_username.conf=auth.conf.txt
+emqxAuthConfig: emqx-auth-config
+
+## Service type - ClusterIP ; LoadBalancer and etc...
+service:
+  type: LoadBalancer
+
+nodeSelector:
+  beta.kubernetes.io/os: linux
+
+tolerations: []
+
+affinity: {}
+
+#Ingress is only enabled for the Dashboard all other services are accessible trough the SVC IP/DNS Name only!
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  path: /
+  hostname: emqx-helm-dashboard1.gke-dev-k8s.sbtech.com
+  port:  18083
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
