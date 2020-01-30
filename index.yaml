@@ -3,12 +3,12 @@ entries:
   emqx:
   - apiVersion: v1
     appVersion: v4.1.0
-    created: "2020-01-31T00:19:01.867882+02:00"
+    created: "2020-01-31T00:24:29.604252+02:00"
     description: A Helm chart for EMQ X
     digest: 20e65f5782ac9da09dd410fbff8f66d30c3741a0a3d4e1735c89e68da109c2dc
     icon: https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png
     name: emqx
     urls:
-    - https://github.com/robomir/helm-chart/emqx-v4.1.0.tgz
+    - https://robomir.github.io/helm-chart/emqx-v4.1.0.tgz
     version: v4.1.0
-generated: "2020-01-31T00:19:01.865649+02:00"
+generated: "2020-01-31T00:24:29.602926+02:00"
