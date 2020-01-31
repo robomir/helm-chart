@@ -37,7 +37,7 @@ emqxConfig:
   ## The address type is used to extract host from k8s service.
   ## Value: ip | dns | hostname
   ## Note：Hostname is only supported after v4.0-rc.2
-  EMQX_CLUSTER__K8S__ADDRESS_TYPE: "hostname"
+  EMQX_CLUSTER__K8S__ADDRESS_TYPE: "ip"
   ## if EMQX_CLUSTER__K8S__ADDRESS_TYPE eq dns
   # EMQX_CLUSTER__K8S__SUFFIX: "pod.cluster.local"
   #Services DNS sufix:
@@ -73,6 +73,8 @@ emqxAclConfig: |-
   {allow, {user, "feng@emqtt.io"}, subscribe, ["$SYS/#"]}.
 
   {allow, {ipaddr, "127.0.0.1"}, pubsub, ["$SYS/#", "#"]}.
+  {allow, {ipaddr, "10.9.96.7"}, pubsub, ["$SYS/#", "#"]}.
+  {allow, {ipaddr, "10.44.66.6"}, pubsub, ["$SYS/#", "#"]}.
 
   {deny, all, subscribe, ["$SYS/#", {eq, "#"}]}.
 

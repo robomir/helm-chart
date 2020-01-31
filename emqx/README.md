@@ -1,5 +1,5 @@
 # Introduction
-This chart bootstraps an emqx deployment on a Kubernetes cluster using the Helm package manager. 
+This chart bootstraps an emqx deployment on a Kubernetes cluster using the Helm package manager.
 
 # Prerequisites
 + Kubernetes 1.6+
@@ -8,7 +8,7 @@ This chart bootstraps an emqx deployment on a Kubernetes cluster using the Helm 
 # Installing the Chart
 To install the chart with the release name `my-emqx`:
 
-+   From github 
++   From github
     ```
     $ git clone https://github.com/emqx/emqx-rel.git
     $ cd emqx-rel/deploy/charts/emqx
@@ -46,4 +46,8 @@ The following table lists the configurable parameters of the emqx chart and thei
 | `tolerations` | Toleration labels for pod assignment |`[]`|
 | `affinity` | Map of node/pod affinities |`{}`|
 | `service.type`  | Emqx cluster service type. |ClusterIP|
+| `ingress.enabled` | ingress configuration | false |
 | `emqxConfig` | Emqx configuration item, see the [documentation](https://github.com/emqx/emqx-docker#emq-x-configuration) | |
+| `emqxAclConfig` | acl config | false |
+| `emqxAuthConfig` | auth config | false |
+| `emqxPluginConfig` | plugin config | false |

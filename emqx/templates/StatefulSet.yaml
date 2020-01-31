@@ -104,7 +104,7 @@ spec:
           - name: EMQX_CLUSTER__K8S__SERVICE_NAME
             value: {{ include "emqx.fullname" . }}
           - name: EMQX_CLUSTER__K8S__ADDRESS_TYPE
-            value: {{.Values.emqxConfig.EMQX_CLUSTER__K8S__ADDRESS_TYPE | default "dns" }}
+            value: {{.Values.emqxConfig.EMQX_CLUSTER__K8S__ADDRESS_TYPE | quote | default "ip" }}
           - name: EMQX_CLUSTER__K8S__APP_NAME
             value: {{.Values.emqxConfig.EMQX_CLUSTER__K8S__APP_NAME | default "emqx"}}
           - name: EMQX_CLUSTER__K8S__NAMESPACE
