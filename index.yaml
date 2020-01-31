@@ -2,10 +2,20 @@ apiVersion: v1
 entries:
   emqx:
   - apiVersion: v1
-    appVersion: v4.1.1
-    created: "2020-01-31T01:03:46.860082+02:00"
+    appVersion: v4.2.0
+    created: "2020-01-31T12:05:49.122232+02:00"
     description: A Helm chart for EMQ X
-    digest: 0d85636d0436ce01dc050325bf4e0e8ead32ba48f84a775f812047488b646e3f
+    digest: c076185cd16fc64fcdad4e59074db51832348b8f200da576cdd5cabceacd8c33
+    icon: https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png
+    name: emqx
+    urls:
+    - https://robomir.github.io/helm-chart/emqx-v4.2.0.tgz
+    version: v4.2.0
+  - apiVersion: v1
+    appVersion: v4.1.1
+    created: "2020-01-31T12:05:49.121496+02:00"
+    description: A Helm chart for EMQ X
+    digest: c998c1684e131569cef29084cda408bb6af90ba97636962559b3b7abcf4d44a7
     icon: https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png
     name: emqx
     urls:
@@ -13,7 +23,7 @@ entries:
     version: v4.1.1
   - apiVersion: v1
     appVersion: v4.1.0
-    created: "2020-01-31T01:03:46.859636+02:00"
+    created: "2020-01-31T12:05:49.120357+02:00"
     description: A Helm chart for EMQ X
     digest: 20e65f5782ac9da09dd410fbff8f66d30c3741a0a3d4e1735c89e68da109c2dc
     icon: https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png
@@ -21,4 +31,4 @@ entries:
     urls:
     - https://robomir.github.io/helm-chart/emqx-v4.1.0.tgz
     version: v4.1.0
-generated: "2020-01-31T01:03:46.858029+02:00"
+generated: "2020-01-31T12:05:49.119047+02:00"
