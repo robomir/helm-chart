@@ -60,22 +60,22 @@ spec:
       {{- if .Values.emqxLicneseSecretName  }}
       - name: emqx-license
         secret:
-          secretName: {{ .Values.emqxLicneseSecretName }}
+          secretName: emqx-lik-config
       {{- end }}
       {{- if .Values.emqxAclConfig  }}
       - name: emqx-acl
         secret:
-          secretName: {{ .Values.emqxAclConfig | quote }}
+          secretName: emqx-acl-config
       {{- end }}
       {{- if .Values.emqxAuthConfig  }}
       - name: emqx-auth
         secret:
-          secretName: {{ .Values.emqxAuthConfig | quote }}
+          secretName: emqx-auth-config
       {{- end }}
       {{- if .Values.emqxPluginConfig  }}
       - name: emqx-plugins
         secret:
-          secretName: {{ .Values.emqxPluginConfig | quote }}
+          secretName: emqx-plugin-config
       {{- end }}
       serviceAccountName:  {{ include "emqx.fullname" . }}
       securityContext:
@@ -127,10 +127,10 @@ spec:
             mountPath: /opt/emqx/etc/acl.conf
             subPath: acl.conf
           {{ end }}
-          {{ if .Values.emqxAuthConfig  }}
           #username|password - etc/plugins/emqx_auth_username.conf
           #id | password - etc/plugins/emqx_auth_clientid.conf
           #http auth - etc/plugins/emqx_auth_http.conf
+          {{ if .Values.emqxAuthConfig  }}
           - name: emqx-auth
             mountPath: /opt/emqx/etc/plugins/emqx_auth_username.conf
             subPath: emqx_auth_username.conf

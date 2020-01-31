@@ -45,25 +45,91 @@ emqxConfig:
   #EMQ X node name:
   EMQX_CLUSTER__K8S__APP_NAME: emqx
 
-## EMQX Enterprise Edition requires manual creation of a Secret containing the licensed content. Write the name of Secret to the value of "emqxLicneseSecretName"
-## Example:
-##   kubectl create secret generic emqx-license-secret-name --from-file=/path/to/emqx.lic
-emqxLicneseSecretName:
+## EMQX Enterprise Edition requires a Secret containing the licensed content. you can add the licence to the blob bellow
+##emqxLicneseSecretName: |-
+##  test test test
 
-## If you want to manipulate the ACLs you can manually create a secret and assign the name as a value to emqxAclConfig
-## Example:
-##   kubectl -n your_namespace create secret generic emqx-scl-config --from-file=acl.conf=/path/to/file/emqx_acl.conf
-##emqxAclConfig: emqx-acl-config
+## If you want to manipulate the ACLs you can make changes in the blob bellow
+emqxAclConfig: |-
+  %%--------------------------------------------------------------------
+  %% [ACL](https://docs.emqx.io/broker/v3/en/config.html)
+  %%
+  %% -type(who() :: all | binary() |
+  %%                {ipaddr, esockd_access:cidr()} |
+  %%                {client, binary()} |
+  %%                {user, binary()}).
+  %%
+  %% -type(access() :: subscribe | publish | pubsub).
+  %%
+  %% -type(topic() :: binary()).
+  %%
+  %% -type(rule() :: {allow, all} |
+  %%                 {allow, who(), access(), list(topic())} |
+  %%                 {deny, all} |
+  %%                 {deny, who(), access(), list(topic())}).
+  %%--------------------------------------------------------------------
 
-## In order to manage user/passwords for MQTT service you may screate a secret and assign the name as a value to emqxAuthConfig
-## Example:
-##   kubectl -n your_namespace create secret generic emqx-userpass-config --from-file=emqx_auth_username.conf=/path/to/file/emqx_auth.conf
-emqxAuthConfig: emqx-auth-config
+  {allow, {user, "dashboard"}, subscribe, ["$SYS/#"]}.
+  {allow, {user, "feng@emqtt.io"}, subscribe, ["$SYS/#"]}.
 
-## In order to manage plugins startup in EMQX you must screate a secret and assign the name as a value to emqxPluginConfig
-## Example:
-##   kubectl -n your_namespace create secret generic emqx-plugin-config --from-file=loaded_plugins=/path/to/file/emqx_loaded.plugins
-emqxPluginConfig: emqx-plugin-config
+  {allow, {ipaddr, "127.0.0.1"}, pubsub, ["$SYS/#", "#"]}.
+
+  {deny, all, subscribe, ["$SYS/#", {eq, "#"}]}.
+
+  {allow, all}.
+
+## In order to manage user/passwords for MQTT service you can make changes to the blob bellow
+emqxAuthConfig: |-
+  ##--------------------------------------------------------------------
+  ## Username Authentication Plugin
+  ##--------------------------------------------------------------------
+
+  ## Examples:
+  auth.user.1.username = admin
+  auth.user.1.password = s4do7ihfoa
+  auth.user.2.username = feng@emqtt.io
+  auth.user.2.password = public
+  auth.user.3.username = name~!@#$%^&*()_+
+  auth.user.3.password = pwsswd~!@#$%^&*()_+
+  auth.user.4.username = username
+  auth.user.4.password = abv123
+
+  ## Password hash.
+  ##
+  ## Value: plain | md5 | sha | sha256
+  auth.user.password_hash = sha256
+
+## In order to manage plugins startup in EMQX you can make changes to the blob bellow
+emqxPluginConfig: |-
+  {emqx_recon,true}.
+  {emqx_retainer,true}.
+  {emqx_dashboard,true}.
+  {emqx_management,true}.
+  {emqx_rule_engine,true}.
+  {emqx_auth_username,true}.
+  {emqx_delayed_publish,false}.
+  {emqx_plugin_template,false}.
+  {emqx_auth_clientid,false}.
+  {emqx_bridge_mqtt,false}.
+  {emqx_rule_engine,false}.
+  {emqx_bridge_mqtt,false}.
+  {emqx_auth_mongo,false}.
+  {emqx_auth_mysql,false}.
+  {emqx_auth_pgsql,false}.
+  {emqx_auth_redis,false}.
+  {emqx_auth_ldap,false}.
+  {emqx_auth_http,false}.
+  {emqx_auth_jwt,false}.
+  {emqx_psk_file,false}.
+  {emqx_web_hook,false}.
+  {emqx_lua_hook,false}.
+  {emqx_retainer,false}.
+  {emqx_reloader,false}.
+  {emqx_lwm2m,false}.
+  {emqx_stomp,false}.
+  {emqx_recon,false}.
+  {emqx_coap,false}.
+  {emqx_sn,false}.
 
 ## Service type - ClusterIP ; LoadBalancer (Internal)
 service:

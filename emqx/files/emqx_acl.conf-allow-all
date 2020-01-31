@@ -16,5 +16,10 @@
 %%                 {deny, who(), access(), list(topic())}).
 %%--------------------------------------------------------------------
 
-{allow, all}.
+{allow, {user, "feng@emqtt.io"}, subscribe, ["$SYS/#"]}.
 
+{allow, {ipaddr, "127.0.0.1"}, pubsub, ["$SYS/#", "#"]}.
+
+{deny, all, subscribe, ["$SYS/#", {eq, "#"}]}.
+
+{allow, all}.
