@@ -19,7 +19,7 @@ To install the chart with release name `my-emqx`:
 +   From chart repos
     ```
     helm repo add robo-helm https://robomir.github.io/helm-chart/
-    helm install my-emqx emqx/emqx
+    helm install my-emqx robo-helm/emqx
     ```
 
 # Uninstalling the Chart
