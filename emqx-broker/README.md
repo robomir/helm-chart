@@ -11,15 +11,15 @@ To install the chart with release name `my-emqx`:
 
 +   From github
     ```
-    $ git ssh://git@bitbucket.sbtech.com:7999/dev/paas-asia.git
-    $ cd paas-asia/helm/sbtech-charts/emqx/
+    $ git clone https://github.com/robomir/helm-chart.git
+    $ cd helm-chart/emqx-broker/
     $ helm install my-emqx .
     ```
 
 +   From chart repos
     ```
     helm repo add robo-helm https://robomir.github.io/helm-chart/
-    helm install my-emqx robo-helm/emqx
+    helm install my-emqx robo-helm/emqx-broker
     ```
 
 # Uninstalling the Chart
