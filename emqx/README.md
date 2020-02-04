@@ -18,7 +18,7 @@ To install the chart with release name `my-emqx`:
 
 +   From chart repos
     ```
-    helm repo add SBTech-helm http://artifactory.sbtech.com/artifactory/SBTech-helm --username <USERNAME> --password <PASSWORD>
+    helm repo add robo-helm https://robomir.github.io/helm-chart/
     helm install my-emqx emqx/emqx
     ```
 

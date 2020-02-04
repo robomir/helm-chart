@@ -183,7 +183,7 @@ ingress:
     kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   path: /
-  hostname: emqx-dashboard.exmp-env-k8s.sbtech.com
+  hostname: emqx-dashboard.exmp-env.example.com
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
