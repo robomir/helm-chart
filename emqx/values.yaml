@@ -121,13 +121,13 @@ emqxAuthConfig: |-
 
 ## In order to manage statsd plugin config in EMQX you can make changes to the blob bellow
 emqxStatsdConfig: |-
-##--------------------------------------------------------------------
-## Statsd for EMQ X
-##--------------------------------------------------------------------
-
-statsd.push.gateway.server = http://127.0.0.1:9091
-statsd.interval = 15000
-prometheus.collector.1 = emqx_statsd
+  ##--------------------------------------------------------------------
+  ## Statsd for EMQ X
+  ##--------------------------------------------------------------------
+  
+  statsd.push.gateway.server = http://127.0.0.1:9091
+  statsd.interval = 15000
+  prometheus.collector.1 = emqx_statsd
 
 ## In order to manage plugins startup in EMQX you can make changes to the blob bellow
 emqxPluginConfig: |-
