@@ -8,6 +8,7 @@ image:
   repository: emqx/emqx
   pullPolicy: IfNotPresent
 
+## A PersistentVolume (PV) is a piece of storage in the cluster that has been provisioned by an administrator or dynamically provisioned using Storage Classes. It is a resource in the cluster just like a node is a cluster resource. PVs are volume plugins like Volumes, but have a lifecycle independent of any individual Pod that uses the PV. This API object captures the details of the implementation of the storage, be that NFS, iSCSI, or a cloud-provider-specific storage system.
 persistence:
   enabled: true
   size: 20Mi
@@ -20,6 +21,7 @@ persistence:
   ## So, for example, the name can depend on .Release or .Chart
   # existingClaim: ""
 
+## When you specify a Pod, you can optionally specify how much CPU and memory (RAM) each Container needs, if you don't specify anything here you'll be assigned some unknown default value 
 resources:
   limits:
     cpu: 500m
@@ -44,6 +46,8 @@ emqxConfig:
   EMQX_CLUSTER__K8S__SUFFIX: "svc.cluster.local"
   #EMQ X node name:
   EMQX_CLUSTER__K8S__APP_NAME: emqx
+  #EMQX Dashboard port
+  ##EMQX_DASHBOARD__LISTENER__HTTP: "80"
 
 ## EMQX Enterprise Edition requires a Secret containing the licensed content. you can add the licence to the blob bellow
 ##emqxLicneseSecretName: |-
@@ -68,17 +72,31 @@ emqxAclConfig: |-
   %%                 {deny, all} |
   %%                 {deny, who(), access(), list(topic())}).
   %%--------------------------------------------------------------------
+  # Allow user 'dashboard'and 'feng@emqtt.io' to subscribe to the spcific topic
+  #{allow, {user, "dashboard"}, subscribe, ["$SYS/#"]}.
+  #{allow, {user, "feng@emqtt.io"}, subscribe, ["$SYS/#"]}.
 
-  {allow, {user, "dashboard"}, subscribe, ["$SYS/#"]}.
-  {allow, {user, "feng@emqtt.io"}, subscribe, ["$SYS/#"]}.
+  # Allow user 'sbtech' to publish in ANY topic
+  {allow, {user, "sbtech"}, publish, ["#"]}.
 
-  {allow, {ipaddr, "127.0.0.1"}, pubsub, ["$SYS/#", "#"]}.
-  {allow, {ipaddr, "10.9.96.7"}, pubsub, ["$SYS/#", "#"]}.
-  {allow, {ipaddr, "10.44.66.6"}, pubsub, ["$SYS/#", "#"]}.
+  # Allow local users to publich and subscribe to "$SYS/#" and any other topic
+  #{allow, {ipaddr, "127.0.0.1"}, pubsub, ["$SYS/#", "#"]}.
 
-  {deny, all, subscribe, ["$SYS/#", {eq, "#"}]}.
+  # Allow specific IPs to publich and subscribe to "$SYS/#" and "#" topics
+  #{allow, {ipaddr, "10.9.96.7"}, pubsub, ["$SYS/#" {eq, "#"}]}.
+  #{allow, {ipaddr, "10.44.66.6"}, pubsub, ["$SYS/#" {eq, "#"}]}.
 
-  {allow, all}.
+  # Allow everyone to subscribe to any topic
+  {allow, all, subscribe, ["#"]}.
+
+  # Deny everyone, except local users, subscribsion to "$SYS/#" and "#" topics
+  #{deny, all, subscribe, ["$SYS/#", {eq, "#"}]}.
+
+  # Allow everything
+  #{allow, all}.
+
+  # Deny everything
+  {deny, all}.
 
 ## In order to manage user/passwords for MQTT service you can make changes to the blob bellow
 emqxAuthConfig: |-
@@ -87,23 +105,34 @@ emqxAuthConfig: |-
   ##--------------------------------------------------------------------
 
   ## Examples:
-  auth.user.1.username = admin
+  auth.user.1.username = sbtech
   auth.user.1.password = s4do7ihfoa
-  auth.user.2.username = feng@emqtt.io
-  auth.user.2.password = public
-  auth.user.3.username = name~!@#$%^&*()_+
-  auth.user.3.password = pwsswd~!@#$%^&*()_+
-  auth.user.4.username = username
-  auth.user.4.password = abv123
+  #auth.user.2.username = feng@emqtt.io
+  #auth.user.2.password = public
+  #auth.user.3.username = name~!@#$%^&*()_+
+  #auth.user.3.password = pwsswd~!@#$%^&*()_+
+  #auth.user.4.username = username
+  #auth.user.4.password = abv123
 
   ## Password hash.
   ##
   ## Value: plain | md5 | sha | sha256
   auth.user.password_hash = sha256
 
+## In order to manage statsd plugin config in EMQX you can make changes to the blob bellow
+emqxStatsdConfig: |-
+##--------------------------------------------------------------------
+## Statsd for EMQ X
+##--------------------------------------------------------------------
+
+statsd.push.gateway.server = http://127.0.0.1:9091
+statsd.interval = 15000
+prometheus.collector.1 = emqx_statsd
+
 ## In order to manage plugins startup in EMQX you can make changes to the blob bellow
 emqxPluginConfig: |-
   {emqx_recon,true}.
+  {emqx_statsd,true}.
   {emqx_retainer,true}.
   {emqx_dashboard,true}.
   {emqx_management,true}.
@@ -133,26 +162,28 @@ emqxPluginConfig: |-
   {emqx_coap,false}.
   {emqx_sn,false}.
 
-## Service type - ClusterIP ; LoadBalancer (Internal)
+## You can choose between two Service types - ClusterIP ; LoadBalancer (Internal)
 service:
   type: LoadBalancer
 
+## Pre-defined Node selectors that would work in SBTech's clusters
 nodeSelector:
   beta.kubernetes.io/os: linux
 
+## Taints and tolerations work together to ensure that pods are not scheduled onto inappropriate nodes.
 tolerations: []
 
+## The affinity/anti-affinity feature, greatly expands the types of constraints you can express in comparison to nodeSelector
 affinity: {}
 
-## Ingress is only enabled for the Dashboard all other services are accessible trough the SVC IP/DNS Name only!
+## Ingress is only enabled for the Dashboard all other services are accessible trough the SVC IP/DNS and consul. Pleaes update hostname before deploying
 ingress:
   enabled: true
   annotations:
     kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   path: /
-  hostname: emqx-helm-dashboard1.gke-dev-k8s.sbtech.com
-  port:  18083
+  hostname: emqx-dashboard.exmp-env-k8s.sbtech.com
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:

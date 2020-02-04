@@ -72,6 +72,11 @@ spec:
         secret:
           secretName: emqx-auth-config
       {{- end }}
+      {{- if .Values.emqxStatsdConfig  }}
+      - name: emqx-statsd
+        secret:
+          secretName: emqx-statsd-config
+      {{- end }}
       {{- if .Values.emqxPluginConfig  }}
       - name: emqx-plugins
         secret:
@@ -134,6 +139,11 @@ spec:
           - name: emqx-auth
             mountPath: /opt/emqx/etc/plugins/emqx_auth_username.conf
             subPath: emqx_auth_username.conf
+          {{ end }}
+          {{ if .Values.emqxStatsdConfig  }}
+          - name: emqx-statsd
+            mountPath: /opt/emqx/etc/plugins/emqx_statsd.conf
+            subPath: emqx_statsd.conf
           {{ end }}
           {{ if .Values.emqxPluginConfig  }}
           - name: emqx-plugins
