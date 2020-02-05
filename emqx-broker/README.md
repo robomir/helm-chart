@@ -52,7 +52,7 @@ The following table lists the configurable parameters of the emqx chart and thei
 | `affinity` | Map of node/pod affinities |`{}`|
 | `service.type`  | emqx cluster service type. |ClusterIP|
 | `ingress.enabled` | ingress configuration | false |
-| `ingress.hostname` | ingress hostname | none |
+| `ingress.domainname` | release name is appended to ingress domainname to form the hostname for the ingress | `exmp-env.example.com` |
 | `ingress.path` | ingress path| `/` |
 | `ingress.tls` | ingress tls config | none |
 | `ingress.annotations` | ingress annottations | `kubernetes.io/ingress.class: nginx` |
