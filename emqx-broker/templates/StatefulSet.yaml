@@ -151,7 +151,7 @@ spec:
             httpGet:
               path: /status
               port: {{ .Values.emqxConfig.EMQX_MANAGEMENT__LISTENER__HTTP | default 8081 }}
-            initialDelaySeconds: 5
+            initialDelaySeconds: 25
             periodSeconds: 5
     {{- with .Values.nodeSelector }}
       nodeSelector:

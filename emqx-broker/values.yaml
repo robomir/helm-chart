@@ -72,30 +72,30 @@ emqxAclConfig: |-
   %%                 {deny, all} |
   %%                 {deny, who(), access(), list(topic())}).
   %%--------------------------------------------------------------------
-  # Allow user 'dashboard'and 'feng@emqtt.io' to subscribe to the spcific topic
-  #{allow, {user, "dashboard"}, subscribe, ["$SYS/#"]}.
-  #{allow, {user, "feng@emqtt.io"}, subscribe, ["$SYS/#"]}.
+  %% Allow user 'dashboard'and 'feng@emqtt.io' to subscribe to the spcific topic
+  %%{allow, {user, "dashboard"}, subscribe, ["$SYS/#"]}.
+  %%{allow, {user, "feng@emqtt.io"}, subscribe, ["$SYS/#"]}.
 
-  # Allow user 'sbtech' to publish in ANY topic
+  %% Allow user 'sbtech' to publish in ANY topic
   {allow, {user, "sbtech"}, publish, ["#"]}.
 
-  # Allow local users to publich and subscribe to "$SYS/#" and any other topic
-  #{allow, {ipaddr, "127.0.0.1"}, pubsub, ["$SYS/#", "#"]}.
+  %% Allow local users to publich and subscribe to "$SYS/#" and any other topic
+  %%{allow, {ipaddr, "127.0.0.1"}, pubsub, ["$SYS/#", "#"]}.
 
-  # Allow specific IPs to publich and subscribe to "$SYS/#" and "#" topics
-  #{allow, {ipaddr, "10.9.96.7"}, pubsub, ["$SYS/#" {eq, "#"}]}.
-  #{allow, {ipaddr, "10.44.66.6"}, pubsub, ["$SYS/#" {eq, "#"}]}.
+  %% Allow specific IPs to publich and subscribe to "$SYS/#" and "#" topics
+  %%{allow, {ipaddr, "10.9.96.7"}, pubsub, ["$SYS/#" {eq, "#"}]}.
+  %%{allow, {ipaddr, "10.44.66.6"}, pubsub, ["$SYS/#" {eq, "#"}]}.
 
-  # Allow everyone to subscribe to any topic
+  %% Allow everyone to subscribe to any topic
   {allow, all, subscribe, ["#"]}.
 
-  # Deny everyone, except local users, subscribsion to "$SYS/#" and "#" topics
-  #{deny, all, subscribe, ["$SYS/#", {eq, "#"}]}.
+  %% Deny everyone, except local users, subscribsion to "$SYS/#" and "#" topics
+  %%{deny, all, subscribe, ["$SYS/#", {eq, "#"}]}.
 
-  # Allow everything
-  #{allow, all}.
+  %% Allow everything
+  %%{allow, all}.
 
-  # Deny everything
+  %% Deny everything
   {deny, all}.
 
 ## In order to manage user/passwords for MQTT service you can make changes to the blob bellow

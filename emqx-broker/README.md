@@ -56,8 +56,8 @@ The following table lists the configurable parameters of the emqx chart and thei
 | `ingress.path` | ingress path| `/` |
 | `ingress.tls` | ingress tls config | none |
 | `ingress.annotations` | ingress annottations | `kubernetes.io/ingress.class: nginx` |
-| `emqxConfig` | emqx configuration item, see the [documentation](https://github.com/emqx/emqx-docker#emq-x-configuration) | |
-| `emqxAclConfig` | acl configuration item, see the [documentation](https://docs.emqx.io/tutorial/v4/en/security/acl.html)| false |
-| `emqxAuthConfig` | auth plugin configuration item, see the [documentation](https://github.com/emqx/emqx-auth-username) | false |
-| `emqxStatsdConfig` | statsd plugin configuration item, see the [documentation](https://github.com/emqx/emqx-statsd) | false |
-| `emqxPluginConfig` | plugin configuration item, see the [documentation](https://docs.emqx.io/tutorial/v4/en/config/plugins.html) | false |
+| `emqxConfig` | emqx configuration item, see the [documentation](https://github.com/emqx/emqx-docker#emq-x-configuration) | enabled: `true`|
+| `emqxAclConfig` | acl configuration item, see the [documentation](https://docs.emqx.io/tutorial/v4/en/security/acl.html)| enabled: `true` |
+| `emqxAuthConfig` | auth plugin configuration item, see the [documentation](https://github.com/emqx/emqx-auth-username) | enabled: `true` |
+| `emqxStatsdConfig` | statsd plugin configuration item, see the [documentation](https://github.com/emqx/emqx-statsd) | enabled: `true` |
+| `emqxPluginConfig` | plugin configuration item, see the [documentation](https://docs.emqx.io/tutorial/v4/en/config/plugins.html) | enabled: `true` |

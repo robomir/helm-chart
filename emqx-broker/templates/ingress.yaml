@@ -6,7 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/name: {{ include "emqx.name" . }}-ingress
     helm.sh/chart: {{ include "emqx.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-instance
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   annotations:
     {{- if .Values.ingress.certManager }}
