@@ -4,7 +4,7 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name }}-dashboard
   labels:
-    app.kubernetes.io/name: {{ include "emqx.name" . }}-ingress
+    app.kubernetes.io/name: {{ .Release.Name }}-ingress
     helm.sh/chart: {{ include "emqx.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-instance
     app.kubernetes.io/managed-by: {{ .Release.Service }}
@@ -29,15 +29,6 @@ spec:
           serviceName:  {{ .Release.Name }}
         {{- end}}
           servicePort: {{ .Values.emqxConfig.EMQX_DASHBOARD__LISTENER__HTTP | default 18083 }}
-  {{- end }}
-  {{- range .Values.ingress.alias }}
-  - host: {{ .name }}
-    http:
-      paths:
-      - path: {{ default "/" .path }}
-        backend:
-          serviceName:  {{ template "Release.Name" $ }}
-          servicePort: {{ .Values.ingress.aliasports }}
   {{- end }}
   {{- if .Values.ingress.tls }}
   tls:
