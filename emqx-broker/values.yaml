@@ -76,15 +76,15 @@ emqxAclConfig: |-
   %%{allow, {user, "dashboard"}, subscribe, ["$SYS/#"]}.
   %%{allow, {user, "feng@emqtt.io"}, subscribe, ["$SYS/#"]}.
 
-  %% Allow user 'sbtech' to publish in ANY topic
-  {allow, {user, "sbtech"}, publish, ["#"]}.
+  %% Allow user 's879atfg' to publish in ANY topic
+  {allow, {user, "s879atfg"}, publish, ["#"]}.
 
   %% Allow local users to publich and subscribe to "$SYS/#" and any other topic
   %%{allow, {ipaddr, "127.0.0.1"}, pubsub, ["$SYS/#", "#"]}.
 
   %% Allow specific IPs to publich and subscribe to "$SYS/#" and "#" topics
-  %%{allow, {ipaddr, "10.9.96.7"}, pubsub, ["$SYS/#" {eq, "#"}]}.
-  %%{allow, {ipaddr, "10.44.66.6"}, pubsub, ["$SYS/#" {eq, "#"}]}.
+  %%{allow, {ipaddr, "172.16.96.7"}, pubsub, ["$SYS/#" {eq, "#"}]}.
+  %%{allow, {ipaddr, "172.16.66.6"}, pubsub, ["$SYS/#" {eq, "#"}]}.
 
   %% Allow everyone to subscribe to any topic
   {allow, all, subscribe, ["#"]}.
@@ -105,7 +105,7 @@ emqxAuthConfig: |-
   ##--------------------------------------------------------------------
 
   ## Examples:
-  auth.user.1.username = sbtech
+  auth.user.1.username = s879atfg
   auth.user.1.password = s4do7ihfoa
   #auth.user.2.username = feng@emqtt.io
   #auth.user.2.password = public
@@ -166,7 +166,7 @@ emqxPluginConfig: |-
 
 ## You can choose between two Service types - ClusterIP ; LoadBalancer (Internal)
 service:
-  type: ClusterIP
+  type: LoadBalancer
 
 ## Pre-defined Node selectors that would work in SBTech's clusters
 nodeSelector:
@@ -185,7 +185,7 @@ ingress:
     kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   path: /
-  domainname: gke-dev-k8s.sbtech.com
+  domainname: exmp-env.example.com
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:

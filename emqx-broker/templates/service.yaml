@@ -16,7 +16,7 @@ metadata:
     app.kubernetes.io/name: {{ .Release.Name }}-ingress
   {{- end}}
     helm.sh/chart: {{ include "emqx.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-instance
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   type: {{ .Values.service.type }}
@@ -49,7 +49,7 @@ spec:
 {{- end}}
   selector:
     app.kubernetes.io/name: {{ .Release.Name }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-instance
 
 ---
 {{- if eq .Values.service.type "LoadBalancer" }}
@@ -65,7 +65,7 @@ metadata:
   labels:
     app.kubernetes.io/name: {{ .Release.Name }}-ingress
     helm.sh/chart: {{ include "emqx.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-instance
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   type: {{ .Values.service.type }}
@@ -76,7 +76,7 @@ spec:
     targetPort: {{ .Values.emqxConfig.EMQX_DASHBOARD__LISTENER__HTTP | default 18083 }}
   selector:
     app.kubernetes.io/name: {{ .Release.Name }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-instance
 {{- end }}
 
 ---
@@ -91,7 +91,7 @@ metadata:
   labels:
     app.kubernetes.io/name: {{ .Release.Name }}
     helm.sh/chart: {{ include "emqx.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-instance
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   type: ClusterIP
@@ -124,4 +124,4 @@ spec:
     targetPort: {{ .Values.emqxConfig.EMQX_DASHBOARD__LISTENER__HTTP | default 18083 }}
   selector:
     app.kubernetes.io/name: {{ .Release.Name }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-instance

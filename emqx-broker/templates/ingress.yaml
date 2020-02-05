@@ -23,7 +23,11 @@ spec:
       paths:
       - path: /
         backend:
+        {{- if eq .Values.service.type "LoadBalancer" }}
+          serviceName:  {{ .Release.Name }}-dashboard
+        {{- else}}
           serviceName:  {{ .Release.Name }}
+        {{- end}}
           servicePort: {{ .Values.emqxConfig.EMQX_DASHBOARD__LISTENER__HTTP | default 18083 }}
   {{- end }}
   {{- range .Values.ingress.alias }}
