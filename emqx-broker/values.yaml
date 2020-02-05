@@ -119,22 +119,21 @@ emqxAuthConfig: |-
   ## Value: plain | md5 | sha | sha256
   auth.user.password_hash = sha256
 
-## In order to manage statsd plugin config in EMQX you can make changes to the blob bellow
-emqxStatsdConfig: |-
-  ##--------------------------------------------------------------------
-  ## Statsd for EMQ X
-  ##--------------------------------------------------------------------
-
-  statsd.push.gateway.server = http://127.0.0.1:9091
-
-  statsd.interval = 15000
-
-  prometheus.collector.1 = emqx_statsd
+## In order to manage statsd plugin config in EMQX you can make changes to the blob bellow - !!!THE PLUGIN IS MISSING!!!
+##emqxStatsdConfig: |-
+##  ##--------------------------------------------------------------------
+##  ## Statsd for EMQ X
+##  ##--------------------------------------------------------------------
+##
+##  statsd.push.gateway.server = http://127.0.0.1:9091
+##
+##  statsd.interval = 15000
+##
+##  prometheus.collector.1 = emqx_statsd
 
 ## In order to manage plugins startup in EMQX you can make changes to the blob bellow
 emqxPluginConfig: |-
   {emqx_recon,true}.
-  {emqx_statsd,true}.
   {emqx_retainer,true}.
   {emqx_dashboard,true}.
   {emqx_management,true}.
@@ -158,6 +157,7 @@ emqxPluginConfig: |-
   {emqx_lua_hook,false}.
   {emqx_retainer,false}.
   {emqx_reloader,false}.
+  {emqx_statsd,false}.
   {emqx_lwm2m,false}.
   {emqx_stomp,false}.
   {emqx_recon,false}.
