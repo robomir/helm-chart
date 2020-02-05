@@ -3,7 +3,7 @@ entries:
   emqx:
   - apiVersion: v1
     appVersion: v4.2.0
-    created: "2020-02-04T22:18:56.672376+02:00"
+    created: "2020-02-05T17:13:36.064793+02:00"
     description: A Helm chart for EMQ X
     digest: 00dae590257782fb817bc14ed29877dfefcf091281b26cb4b8522bb4acea5b66
     icon: https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png
@@ -13,7 +13,7 @@ entries:
     version: v4.2.0
   - apiVersion: v1
     appVersion: v4.1.1
-    created: "2020-02-04T22:18:56.670125+02:00"
+    created: "2020-02-05T17:13:36.062919+02:00"
     description: A Helm chart for EMQ X
     digest: c998c1684e131569cef29084cda408bb6af90ba97636962559b3b7abcf4d44a7
     icon: https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png
@@ -23,7 +23,7 @@ entries:
     version: v4.1.1
   - apiVersion: v1
     appVersion: v4.1.0
-    created: "2020-02-04T22:18:56.668296+02:00"
+    created: "2020-02-05T17:13:36.061693+02:00"
     description: A Helm chart for EMQ X
     digest: 20e65f5782ac9da09dd410fbff8f66d30c3741a0a3d4e1735c89e68da109c2dc
     icon: https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png
@@ -33,13 +33,23 @@ entries:
     version: v4.1.0
   emqx-broker:
   - apiVersion: v1
-    appVersion: v4.2.1
-    created: "2020-02-04T22:18:56.666798+02:00"
+    appVersion: v4.3.0
+    created: "2020-02-05T17:13:36.060544+02:00"
     description: A Helm chart for EMQ X
-    digest: c248174850c0906ea5b8f8911daa605bbe44751594026d7f6f6bb5e425482c65
+    digest: 683380c7385f3322da23213994d52e40bac8862e706a0967002f3ef479a87df4
+    icon: https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png
+    name: emqx-broker
+    urls:
+    - https://robomir.github.io/helm-chart/emqx-broker-v4.3.0.tgz
+    version: v4.3.0
+  - apiVersion: v1
+    appVersion: v4.2.1
+    created: "2020-02-05T17:13:36.060009+02:00"
+    description: A Helm chart for EMQ X
+    digest: ef81ca11139f93b5d6e739717a9c97e239c2d089b929f23f735ad4c01dd16115
     icon: https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png
     name: emqx-broker
     urls:
     - https://robomir.github.io/helm-chart/emqx-broker-v4.2.1.tgz
     version: v4.2.1
-generated: "2020-02-04T22:18:56.666136+02:00"
+generated: "2020-02-05T17:13:36.058503+02:00"
