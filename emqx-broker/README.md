@@ -41,7 +41,7 @@ The following table lists the configurable parameters of the emqx chart and thei
 | `replicaCount` | It is recommended to have odd number of nodes in a cluster, otherwise the emqx cluster cannot be automatically healed in case of net-split. | 3 |
 | `image.repository` | EMQ X Image name | emqx/emqx |
 | `image.pullPolicy`  | Global Docker registry secret names as an array | IfNotPresent |
-| `persistence.enabled` | Enable emqx persistence using PVC | true |
+| `persistence.enabled` | Enable emqx persistence using PVC | enabled: `true` |
 | `persistence.storageClass` | Storage class of backing PVC | `nil` (uses alpha storage class annotation) |
 | `persistence.existingClaim` | EMQ X data Persistent Volume existing claim name, evaluated as a template | "" |
 | `persistence.accessMode` | PVC Access Mode for emqx volume | ReadWriteOnce |
@@ -51,7 +51,7 @@ The following table lists the configurable parameters of the emqx chart and thei
 | `tolerations` | Toleration labels for pod assignment | `[]` |
 | `affinity` | Map of node/pod affinities | `{}` |
 | `service.type`  | emqx cluster service type. | LoadBalance |
-| `ingress.enabled` | ingress configuration | false |
+| `ingress.enabled` | ingress configuration | enabled: `true` |
 | `ingress.domainname` | release name is appended to ingress domainname to form the hostname for the ingress | `exmp-env.example.com` |
 | `ingress.path` | ingress path| `/` |
 | `ingress.tls` | ingress tls config | none |
