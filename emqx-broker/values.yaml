@@ -3,9 +3,9 @@
 ## Declare variables to be passed into your templates.
 
 ## It is recommended to have odd number of nodes in a cluster, otherwise the emqx cluster cannot be automatically healed in case of net-split.
-replicaCount: 5
+replicaCount: 3
 image:
-  repository: robo-helm/emqx
+  repository: emqx/emqx
   pullPolicy: IfNotPresent
 
 ## A PersistentVolume (PV) is a piece of storage in the cluster that has been provisioned by an administrator or dynamically provisioned using Storage Classes. It is a resource in the cluster just like a node is a cluster resource. PVs are volume plugins like Volumes, but have a lifecycle independent of any individual Pod that uses the PV. This API object captures the details of the implementation of the storage, be that NFS, iSCSI, or a cloud-provider-specific storage system.
@@ -21,14 +21,14 @@ persistence:
   ## So, for example, the name can depend on .Release or .Chart
   # existingClaim: ""
 
-## When you specify a Pod, you can optionally specify how much CPU and memory (RAM) each Container needs, if you don't specify anything here you'll be assigned some unknown default value 
+## When you specify a Pod, you can optionally specify how much CPU and memory (RAM) each Container needs, if you don't specify anything here you'll be assigned some unknown default value
 resources:
   limits:
-    cpu: 500m
-    memory: 512Mi
+    cpu: 1
+    memory: 1G
   requests:
     cpu: 500m
-    memory: 256Mi
+    memory: 512Mi
 
 ## EMQX configuration item, see the documentation (https://github.com/emqx/emqx-docker#emq-x-configuration)
 emqxConfig:
@@ -124,9 +124,11 @@ emqxStatsdConfig: |-
   ##--------------------------------------------------------------------
   ## Statsd for EMQ X
   ##--------------------------------------------------------------------
-  
+
   statsd.push.gateway.server = http://127.0.0.1:9091
+
   statsd.interval = 15000
+
   prometheus.collector.1 = emqx_statsd
 
 ## In order to manage plugins startup in EMQX you can make changes to the blob bellow
@@ -164,7 +166,7 @@ emqxPluginConfig: |-
 
 ## You can choose between two Service types - ClusterIP ; LoadBalancer (Internal)
 service:
-  type: LoadBalancer
+  type: ClusterIP
 
 ## Pre-defined Node selectors that would work in SBTech's clusters
 nodeSelector:

@@ -2,7 +2,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ include "emqx.fullname" . }}-dashboard
+  name: {{ .Release.Name }}-dashboard
   labels:
     app.kubernetes.io/name: {{ include "emqx.name" . }}-ingress
     helm.sh/chart: {{ include "emqx.chart" . }}
@@ -23,7 +23,7 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName:  {{ include "emqx.fullname" . }}-dashboard
+          serviceName:  {{ .Release.Name }}
           servicePort: {{ .Values.emqxConfig.EMQX_DASHBOARD__LISTENER__HTTP | default 18083 }}
   {{- end }}
   {{- range .Values.ingress.alias }}

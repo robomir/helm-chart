@@ -2,13 +2,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: {{ include "emqx.fullname" . }}
+  name: {{ .Release.Name }}
 ---
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: {{ include "emqx.fullname" . }}
+  name: {{ .Release.Name }}
 rules:
 - apiGroups:
   - ""
@@ -23,12 +23,12 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: {{ include "emqx.fullname" . }}
+  name: {{ .Release.Name }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "emqx.fullname" . }}
+    name: {{ .Release.Name }}
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
-  name: {{ include "emqx.fullname" . }}
+  name: {{ .Release.Name }}
   apiGroup: rbac.authorization.k8s.io

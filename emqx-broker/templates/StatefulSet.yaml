@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "emqx.fullname" . }}
+  name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ include "emqx.name" . }}
+    app.kubernetes.io/name: {{ .Release.Name }}
     helm.sh/chart: {{ include "emqx.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-instance
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  serviceName: {{ include "emqx.fullname" . }}-headless
+  serviceName: {{ .Release.Name }}-headless
   {{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
   volumeClaimTemplates:
     - metadata:
-        name: emqx-data
+        name: {{ .Release.Name }}-data
         namespace: {{ .Release.Namespace }}
         labels:
-          app.kubernetes.io/name: {{ include "emqx.name" . }}
+          app.kubernetes.io/name: {{ .Release.Name }}
           helm.sh/chart: {{ include "emqx.chart" . }}
-          app.kubernetes.io/instance: {{ .Release.Name }}
+          app.kubernetes.io/instance: {{ .Release.Name }}-instance
           app.kubernetes.io/managed-by: {{ .Release.Service }}
         annotations:
         {{- if .Values.persistence.storageClass }}
@@ -38,51 +38,51 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "emqx.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/name: {{ .Release.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}-instance
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "emqx.name" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/name: {{ .Release.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}-instance
     spec:
       volumes:
       {{- if not .Values.persistence.enabled }}
-      - name: emqx-data
+      - name: {{ .Release.Name }}-data
         emptyDir: {}
       {{- else if .Values.persistence.existingClaim }}
-      - name: emqx-data
+      - name: {{ .Release.Name }}-data
         persistentVolumeClaim:
         {{- with .Values.persistence.existingClaim }}
           claimName: {{ tpl . $ }}
         {{- end }}
       {{- end }}
       {{- if .Values.emqxLicneseSecretName  }}
-      - name: emqx-license
+      - name: {{ .Release.Name }}-license
         secret:
-          secretName: emqx-lik-config
+          secretName: {{ .Release.Name }}-lik-config
       {{- end }}
       {{- if .Values.emqxAclConfig  }}
-      - name: emqx-acl
+      - name: {{ .Release.Name }}-acl
         secret:
-          secretName: emqx-acl-config
+          secretName: {{ .Release.Name }}-acl-config
       {{- end }}
       {{- if .Values.emqxAuthConfig  }}
-      - name: emqx-auth
+      - name: {{ .Release.Name }}-auth
         secret:
-          secretName: emqx-auth-config
+          secretName: {{ .Release.Name }}-auth-config
       {{- end }}
       {{- if .Values.emqxStatsdConfig  }}
-      - name: emqx-statsd
+      - name: {{ .Release.Name }}-statsd
         secret:
-          secretName: emqx-statsd-config
+          secretName: {{ .Release.Name }}-statsd-config
       {{- end }}
       {{- if .Values.emqxPluginConfig  }}
-      - name: emqx-plugins
+      - name: {{ .Release.Name }}-plugins
         secret:
-          secretName: emqx-plugin-config
+          secretName: {{ .Release.Name }}-plugin-config
       {{- end }}
-      serviceAccountName:  {{ include "emqx.fullname" . }}
+      serviceAccountName:  {{ .Release.Name }}
       securityContext:
         fsGroup: 1000
       containers:
@@ -98,16 +98,16 @@ spec:
           - containerPort: {{ .Values.emqxConfig.EMQX_DASHBOARD__LISTENER__HTTP | default 18083 }}
           envFrom:
             - configMapRef:
-                name: {{ include "emqx.fullname" . }}-env
+                name: {{ .Release.Name }}-env
           env:
           - name: EMQX_NAME
-            value: {{ include "emqx.name" . }}
+            value: emqx
           - name: EMQX_CLUSTER__DISCOVERY
             value: {{.Values.emqxConfig.EMQX_CLUSTER__K8S__DISCOVRY | default "k8s" }}
           - name: EMQX_CLUSTER__K8S__APISERVER
             value: {{.Values.emqxConfig.EMQX_CLUSTER__K8S__APISERVER | default "https://kubernetes.default.svc.cluster.local:443"}}
           - name: EMQX_CLUSTER__K8S__SERVICE_NAME
-            value: {{ include "emqx.fullname" . }}
+            value: {{ .Release.Name }}
           - name: EMQX_CLUSTER__K8S__ADDRESS_TYPE
             value: {{.Values.emqxConfig.EMQX_CLUSTER__K8S__ADDRESS_TYPE | quote | default "ip" }}
           - name: EMQX_CLUSTER__K8S__APP_NAME
@@ -119,34 +119,31 @@ spec:
           resources:
 {{ toYaml .Values.resources | indent 12 }}
           volumeMounts:
-          - name: emqx-data
+          - name: {{ .Release.Name }}-data
             mountPath: "/opt/emqx/data/mnesia"
           {{ if .Values.emqxLicneseSecretName  }}
-          - name: emqx-license
+          - name: {{ .Release.Name }}-license
             mountPath: "/opt/emqx/etc/emqx.lic"
             subPath: "emqx.lic"
             readOnly: true
           {{ end }}
           {{ if .Values.emqxAclConfig  }}
-          - name: emqx-acl
+          - name: {{ .Release.Name }}-acl
             mountPath: /opt/emqx/etc/acl.conf
             subPath: acl.conf
           {{ end }}
-          #username|password - etc/plugins/emqx_auth_username.conf
-          #id | password - etc/plugins/emqx_auth_clientid.conf
-          #http auth - etc/plugins/emqx_auth_http.conf
           {{ if .Values.emqxAuthConfig  }}
-          - name: emqx-auth
+          - name: {{ .Release.Name }}-auth
             mountPath: /opt/emqx/etc/plugins/emqx_auth_username.conf
             subPath: emqx_auth_username.conf
           {{ end }}
           {{ if .Values.emqxStatsdConfig  }}
-          - name: emqx-statsd
+          - name: {{ .Release.Name }}-statsd
             mountPath: /opt/emqx/etc/plugins/emqx_statsd.conf
             subPath: emqx_statsd.conf
           {{ end }}
           {{ if .Values.emqxPluginConfig  }}
-          - name: emqx-plugins
+          - name: {{ .Release.Name }}-plugins
             mountPath: /opt/emqx/data/loaded_plugins
             subPath: loaded_plugins
           {{ end }}

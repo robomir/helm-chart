@@ -41,22 +41,23 @@ The following table lists the configurable parameters of the emqx chart and thei
 | `replicaCount` | It is recommended to have odd number of nodes in a cluster, otherwise the emqx cluster cannot be automatically healed in case of net-split. |3|
 | `image.repository` | EMQ X Image name |emqx/emqx|
 | `image.pullPolicy`  | Global Docker registry secret names as an array |IfNotPresent|
-| `persistence.enabled` | Enable EMQX persistence using PVC |true|
+| `persistence.enabled` | Enable emqx persistence using PVC |true|
 | `persistence.storageClass` | Storage class of backing PVC |`nil` (uses alpha storage class annotation)|
 | `persistence.existingClaim` | EMQ X data Persistent Volume existing claim name, evaluated as a template |""|
-| `persistence.accessMode` | PVC Access Mode for EMQX volume |ReadWriteOnce|
-| `persistence.size` | PVC Storage Request for EMQX volume |20Mi|
+| `persistence.accessMode` | PVC Access Mode for emqx volume |ReadWriteOnce|
+| `persistence.size` | PVC Storage Request for emqx volume |20Mi|
 | `resources` | CPU/Memory resource requests/limits |{}|
 | `nodeSelector` | Node labels for pod assignment |`beta.kubernetes.io/os: linux`|
 | `tolerations` | Toleration labels for pod assignment |`[]`|
 | `affinity` | Map of node/pod affinities |`{}`|
-| `service.type`  | Emqx cluster service type. |ClusterIP|
+| `service.type`  | emqx cluster service type. |ClusterIP|
 | `ingress.enabled` | ingress configuration | false |
 | `ingress.hostname` | ingress hostname | none |
 | `ingress.path` | ingress path| `/` |
 | `ingress.tls` | ingress tls config | none |
 | `ingress.annotations` | ingress annottations | `kubernetes.io/ingress.class: nginx` |
-| `emqxConfig` | Emqx configuration item, see the [documentation](https://github.com/emqx/emqx-docker#emq-x-configuration) | |
-| `emqxAclConfig` | acl config | false |
-| `emqxAuthConfig` | auth config | false |
-| `emqxPluginConfig` | plugin config | false |
+| `emqxConfig` | emqx configuration item, see the [documentation](https://github.com/emqx/emqx-docker#emq-x-configuration) | |
+| `emqxAclConfig` | acl configuration item, see the [documentation](https://docs.emqx.io/tutorial/v4/en/security/acl.html)| false |
+| `emqxAuthConfig` | auth plugin configuration item, see the [documentation](https://github.com/emqx/emqx-auth-username) | false |
+| `emqxStatsdConfig` | statsd plugin configuration item, see the [documentation](https://github.com/emqx/emqx-statsd) | false |
+| `emqxPluginConfig` | plugin configuration item, see the [documentation](https://docs.emqx.io/tutorial/v4/en/config/plugins.html) | false |

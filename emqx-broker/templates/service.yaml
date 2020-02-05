@@ -3,16 +3,16 @@ kind: Service
 metadata:
   annotations:
     consul.hashicorp.com/service-sync: "true"
-    consul.hashicorp.com/service-name: {{ include "emqx.fullname" . }}
+    consul.hashicorp.com/service-name: {{ .Release.Name }}
   {{- if eq .Values.service.type "LoadBalancer" }}
     cloud.google.com/load-balancer-type: Internal
   {{- end }}
-  name: {{ include "emqx.fullname" . }}
+  name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ include "emqx.name" . }}
+    app.kubernetes.io/name: {{ .Release.Name }}
     helm.sh/chart: {{ include "emqx.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-instance
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   type: {{ .Values.service.type }}
@@ -37,37 +37,13 @@ spec:
     port: {{ .Values.emqxConfig.EMQX_LISTENER__WSS__EXTERNAL | default 8084 }}
     protocol: TCP
     targetPort: {{ .Values.emqxConfig.EMQX_LISTENER__WSS__EXTERNAL | default 8084 }}
-  selector:
-    app.kubernetes.io/name: {{ include "emqx.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    consul.hashicorp.com/service-sync: "true"
-    consul.hashicorp.com/service-name: {{ include "emqx.fullname" . }}-dashboard
-  {{- if eq .Values.service.type "LoadBalancer" }}
-    cloud.google.com/load-balancer-type: Internal
-  {{- end }}
-  name: {{ include "emqx.fullname" . }}-dashboard
-  namespace: {{ .Release.Namespace }}
-  labels:
-    app.kubernetes.io/name: {{ include "emqx.name" . }}-ingress
-    helm.sh/chart: {{ include "emqx.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-spec:
-  type: {{ .Values.service.type }}
-  ports:
-  - name: {{ include "emqx.fullname" . }}-dashboard
+  - name: dashboard
     port: 80
     protocol: TCP
     targetPort: {{ .Values.emqxConfig.EMQX_DASHBOARD__LISTENER__HTTP | default 18083 }}
   selector:
-    app.kubernetes.io/name: {{ include "emqx.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-instance
 
 ---
 apiVersion: v1
@@ -75,13 +51,13 @@ kind: Service
 metadata:
   annotations:
     consul.hashicorp.com/service-sync: "true"
-    consul.hashicorp.com/service-name: {{ include "emqx.fullname" . }}-headless
-  name: {{ include "emqx.fullname" . }}-headless
+    consul.hashicorp.com/service-name: {{ .Release.Name }}-headless
+  name: {{ .Release.Name }}-headless
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ include "emqx.name" . }}
+    app.kubernetes.io/name: {{ .Release.Name }}
     helm.sh/chart: {{ include "emqx.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-instance
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   type: ClusterIP
@@ -113,5 +89,5 @@ spec:
     protocol: TCP
     targetPort: {{ .Values.emqxConfig.EMQX_DASHBOARD__LISTENER__HTTP | default 18083 }}
   selector:
-    app.kubernetes.io/name: {{ include "emqx.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-instance
