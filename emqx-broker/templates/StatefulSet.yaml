@@ -82,10 +82,37 @@ spec:
         secret:
           secretName: {{ .Release.Name }}-plugin-config
       {{- end }}
+      - name: {{ .Release.Name }}-exporter-auth-config
+        secret:
+          secretName: {{ .Release.Name }}-exporter-auth-config
       serviceAccountName:  {{ .Release.Name }}
       securityContext:
         fsGroup: 1000
       containers:
+        - name: emqx-exporter
+          image: "sbtech-docker.artifactory.sbtech.com/emqx/emqx_exporter:v0.4.2"
+          env:
+          - name: EMQ_USERNAME
+            value: admin
+          - name: EMQX_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-exporter-config
+                key: admin_password
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          args:
+            - --emq.node=emqx@$(POD_IP)
+            - --emq.api-version=v4
+          ports:
+          - name: metrics
+            containerPort: 9540
+          volumeMounts:
+          - name: {{ .Release.Name }}-exporter-auth-config
+            mountPath: /auth.json
+            subPath: auth.json
         - name: emqx
           image: {{ .Values.image.repository }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}

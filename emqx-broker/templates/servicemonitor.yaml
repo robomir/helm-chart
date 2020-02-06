@@ -1,0 +1,25 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}-exporter
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-exporter
+    app.kubernetes.io/name: {{ .Release.Name }}-ingress
+    helm.sh/chart: {{ include "emqx.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-instance
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-exporter
+  endpoints:
+    - port: metrics
+      scheme: http
+      path: '/metrics'
+      interval: 60s
+      honorLabels: true
