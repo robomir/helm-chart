@@ -13,7 +13,7 @@ spec:
   {{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
   volumeClaimTemplates:
     - metadata:
-        name: {{ .Release.Name }}-data
+        name: {{ .Release.Name }}
         namespace: {{ .Release.Namespace }}
         labels:
           app.kubernetes.io/name: {{ .Release.Name }}
@@ -48,10 +48,10 @@ spec:
     spec:
       volumes:
       {{- if not .Values.persistence.enabled }}
-      - name: {{ .Release.Name }}-data
+      - name: {{ .Release.Name }}
         emptyDir: {}
       {{- else if .Values.persistence.existingClaim }}
-      - name: {{ .Release.Name }}-data
+      - name: {{ .Release.Name }}
         persistentVolumeClaim:
         {{- with .Values.persistence.existingClaim }}
           claimName: {{ tpl . $ }}
@@ -146,7 +146,7 @@ spec:
           resources:
 {{ toYaml .Values.resources | indent 12 }}
           volumeMounts:
-          - name: {{ .Release.Name }}-data
+          - name: {{ .Release.Name }}
             mountPath: "/opt/emqx/data/mnesia"
           {{ if .Values.emqxLicneseSecretName  }}
           - name: {{ .Release.Name }}-license
