@@ -8,12 +8,16 @@ metadata:
     helm.sh/chart: {{ include "emqx.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}-instance
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+  {{- if and .Values.configReloader.enabled }}
+  annotations:
+    secret.reloader.stakater.com/reload: "{{ .Release.Name }}-acl-config,{{ .Release.Name }}-auth-config"
+  {{- end }}
 spec:
   serviceName: {{ .Release.Name }}-headless
   {{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
   volumeClaimTemplates:
     - metadata:
-        name: {{ .Release.Name }}
+        name: {{ .Release.Name }}-data
         namespace: {{ .Release.Namespace }}
         labels:
           app.kubernetes.io/name: {{ .Release.Name }}
@@ -30,8 +34,8 @@ spec:
         accessModes:
           - {{ .Values.persistence.accessMode | quote }}
         resources:
-         requests:
-           storage: {{ .Values.persistence.size | quote }}
+          requests:
+            storage: {{ .Values.persistence.size | quote }}
   {{- end }}
   updateStrategy:
     type: RollingUpdate
@@ -47,140 +51,118 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}-instance
     spec:
       volumes:
-      {{- if not .Values.persistence.enabled }}
-      - name: {{ .Release.Name }}
-        emptyDir: {}
-      {{- else if .Values.persistence.existingClaim }}
-      - name: {{ .Release.Name }}
-        persistentVolumeClaim:
-        {{- with .Values.persistence.existingClaim }}
-          claimName: {{ tpl . $ }}
+        - name: {{ .Release.Name }}-exporter-auth-config
+          secret:
+            secretName: {{ .Release.Name }}-exporter-auth-config
+        {{- if not .Values.persistence.enabled }}
+        - name: {{ .Release.Name }}-data
+          emptyDir: {}
+        {{- else if .Values.persistence.existingClaim }}
+        - name: {{ .Release.Name }}-data
+          persistentVolumeClaim:
+          {{- with .Values.persistence.existingClaim }}
+            claimName: {{ tpl . $ }}-data
+          {{- end }}
         {{- end }}
-      {{- end }}
-      {{- if .Values.emqxLicneseSecretName  }}
-      - name: {{ .Release.Name }}-license
-        secret:
-          secretName: {{ .Release.Name }}-lik-config
-      {{- end }}
-      {{- if .Values.emqxAclConfig  }}
-      - name: {{ .Release.Name }}-acl
-        secret:
-          secretName: {{ .Release.Name }}-acl-config
-      {{- end }}
-      {{- if .Values.emqxAuthConfig  }}
-      - name: {{ .Release.Name }}-auth
-        secret:
-          secretName: {{ .Release.Name }}-auth-config
-      {{- end }}
-      {{- if .Values.emqxStatsdConfig  }}
-      - name: {{ .Release.Name }}-statsd
-        secret:
-          secretName: {{ .Release.Name }}-statsd-config
-      {{- end }}
-      {{- if .Values.emqxPluginConfig  }}
-      - name: {{ .Release.Name }}-plugins
-        secret:
-          secretName: {{ .Release.Name }}-plugin-config
-      {{- end }}
-      - name: {{ .Release.Name }}-exporter-auth-config
-        secret:
-          secretName: {{ .Release.Name }}-exporter-auth-config
-      serviceAccountName:  {{ .Release.Name }}
+        {{- if .Values.emqxLicneseSecretName  }}
+        - name: {{ .Release.Name }}-license
+          secret:
+            secretName: {{ .Release.Name }}-lik-config
+        {{- end }}
+        {{- if .Values.emqxAclConfig  }}
+        - name: {{ .Release.Name }}-acl
+          secret:
+            secretName: {{ .Release.Name }}-acl-config
+        {{- end }}
+        {{- if .Values.emqxAuthConfig  }}
+        - name: {{ .Release.Name }}-auth
+          secret:
+            secretName: {{ .Release.Name }}-auth-config
+        {{- end }}
+      serviceAccountName: {{ .Release.Name }}
       securityContext:
         fsGroup: 1000
       containers:
         - name: emqx-exporter
           image: "sbtech-docker.artifactory.sbtech.com/emqx/emqx_exporter:v0.4.2"
           env:
-          - name: EMQ_USERNAME
-            value: admin
-          - name: EMQX_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Release.Name }}-exporter-config
-                key: admin_password
-          - name: POD_IP
-            valueFrom:
-              fieldRef:
-                fieldPath: status.podIP
+            - name: EMQ_USERNAME
+              value: admin
+            - name: EMQX_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-exporter-config
+                  key: admin_password
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
           args:
             - --emq.node=emqx@$(POD_IP)
             - --emq.api-version=v4
           ports:
-          - name: metrics
-            containerPort: 9540
+            - name: metrics
+              containerPort: 9540
           volumeMounts:
-          - name: {{ .Release.Name }}-exporter-auth-config
-            mountPath: /auth.json
-            subPath: auth.json
+            - name: {{ .Release.Name }}-exporter-auth-config
+              mountPath: /auth.json
+              subPath: auth.json
         - name: emqx
           image: {{ .Values.image.repository }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-          - containerPort: {{ .Values.emqxConfig.EMQX_LISTENER__TCP__EXTERNAL | default 1883 }}
-          - containerPort: {{ .Values.emqxConfig.EMQX_LISTENER__SSL__EXTERNAL | default 8883 }}
-          - containerPort: {{ .Values.emqxConfig.EMQX_MANAGEMENT__LISTENER__HTTP | default 8081 }}
-          - containerPort: {{ .Values.emqxConfig.EMQX_LISTENER__WS__EXTERNAL | default 8083 }}
-          - containerPort: {{ .Values.emqxConfig.EMQX_LISTENER__WSS__EXTERNAL | default 8084 }}
-          - containerPort: {{ .Values.emqxConfig.EMQX_DASHBOARD__LISTENER__HTTP | default 18083 }}
+            - containerPort: {{ .Values.emqxConfig.EMQX_LISTENER__TCP__EXTERNAL | default 1883 }}
+            - containerPort: {{ .Values.emqxConfig.EMQX_LISTENER__SSL__EXTERNAL | default 8883 }}
+            - containerPort: {{ .Values.emqxConfig.EMQX_MANAGEMENT__LISTENER__HTTP | default 8081 }}
+            - containerPort: {{ .Values.emqxConfig.EMQX_LISTENER__WS__EXTERNAL | default 8083 }}
+            - containerPort: {{ .Values.emqxConfig.EMQX_LISTENER__WSS__EXTERNAL | default 8084 }}
+            - containerPort: {{ .Values.emqxConfig.EMQX_DASHBOARD__LISTENER__HTTP | default 18083 }}
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-env
           env:
-          - name: EMQX_NAME
-            value: emqx
-          - name: EMQX_CLUSTER__DISCOVERY
-            value: {{.Values.emqxConfig.EMQX_CLUSTER__K8S__DISCOVRY | default "k8s" }}
-          - name: EMQX_CLUSTER__K8S__APISERVER
-            value: {{.Values.emqxConfig.EMQX_CLUSTER__K8S__APISERVER | default "https://kubernetes.default.svc.cluster.local:443"}}
-          - name: EMQX_CLUSTER__K8S__SERVICE_NAME
-            value: {{ .Release.Name }}
-          - name: EMQX_CLUSTER__K8S__ADDRESS_TYPE
-            value: {{.Values.emqxConfig.EMQX_CLUSTER__K8S__ADDRESS_TYPE | quote | default "ip" }}
-          - name: EMQX_CLUSTER__K8S__APP_NAME
-            value: {{.Values.emqxConfig.EMQX_CLUSTER__K8S__APP_NAME | default "emqx"}}
-          - name: EMQX_CLUSTER__K8S__NAMESPACE
-            value: {{ .Release.Namespace }}
-          - name: EMXQ_ACL_FILE
-            value: {{.Values.emqxConfig.EMQX_ACL_FILE | default "/opt/emqx/config/acl.conf"}}
+            - name: EMQX_NAME
+              value: emqx
+            - name: EMQX_CLUSTER__DISCOVERY
+              value: {{.Values.emqxConfig.EMQX_CLUSTER__K8S__DISCOVERY | default "k8s" }}
+            - name: EMQX_CLUSTER__K8S__APISERVER
+              value: {{.Values.emqxConfig.EMQX_CLUSTER__K8S__APISERVER | default "https://kubernetes.default.svc.cluster.local:443"}}
+            - name: EMQX_CLUSTER__K8S__SERVICE_NAME
+              value: {{ .Release.Name }}
+            - name: EMQX_CLUSTER__K8S__ADDRESS_TYPE
+              value: {{.Values.emqxConfig.EMQX_CLUSTER__K8S__ADDRESS_TYPE | quote | default "ip" }}
+            - name: EMQX_CLUSTER__K8S__APP_NAME
+              value: {{.Values.emqxConfig.EMQX_CLUSTER__K8S__APP_NAME | default "emqx"}}
+            - name: EMQX_CLUSTER__K8S__NAMESPACE
+              value: {{ .Release.Namespace }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
           volumeMounts:
-          - name: {{ .Release.Name }}
-            mountPath: "/opt/emqx/data/mnesia"
-          {{ if .Values.emqxLicneseSecretName  }}
-          - name: {{ .Release.Name }}-license
-            mountPath: "/opt/emqx/etc/emqx.lic"
-            subPath: "emqx.lic"
-            readOnly: true
-          {{ end }}
-          {{ if .Values.emqxAclConfig  }}
-          - name: {{ .Release.Name }}-acl
-            mountPath: /opt/emqx/etc/acl.conf
-            subPath: acl.conf
-          {{ end }}
-          {{ if .Values.emqxAuthConfig  }}
-          - name: {{ .Release.Name }}-auth
-            mountPath: /opt/emqx/etc/plugins/emqx_auth_username.conf
-            subPath: emqx_auth_username.conf
-          {{ end }}
-          {{ if .Values.emqxStatsdConfig  }}
-          - name: {{ .Release.Name }}-statsd
-            mountPath: /opt/emqx/etc/plugins/emqx_statsd.conf
-            subPath: emqx_statsd.conf
-          {{ end }}
-          {{ if .Values.emqxPluginConfig  }}
-          - name: {{ .Release.Name }}-plugins
-            mountPath: /opt/emqx/data/loaded_plugins
-            subPath: loaded_plugins
-          {{ end }}
+            - name: {{ .Release.Name }}-data
+              mountPath: "/opt/emqx/data/mnesia"
+            {{- if .Values.emqxLicneseSecretName  }}
+            - name: {{ .Release.Name }}-license
+              mountPath: "/opt/emqx/etc/emqx.lic"
+              subPath: "emqx.lic"
+              readOnly: true
+            {{- end }}
+            {{- if .Values.emqxAclConfig  }}
+            - name: {{ .Release.Name }}-acl
+              mountPath: /opt/emqx/etc/acl.conf
+              subPath: acl.conf
+            {{- end }}
+            {{- if .Values.emqxAuthConfig  }}
+            - name: {{ .Release.Name }}-auth
+              mountPath: /opt/emqx/etc/plugins/emqx_auth_username.conf
+              subPath: emqx_auth_username.conf
+            {{- end }}
           readinessProbe:
             httpGet:
               path: /status
               port: {{ .Values.emqxConfig.EMQX_MANAGEMENT__LISTENER__HTTP | default 8081 }}
-            initialDelaySeconds: 25
+            initialDelaySeconds: 30
             periodSeconds: 5
-    {{- with .Values.nodeSelector }}
+      {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}

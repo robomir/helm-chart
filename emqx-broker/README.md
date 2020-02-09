@@ -16,7 +16,7 @@ To install the chart with release name `my-emqx`:
     $ helm install my-emqx .
     ```
 
-+   From chart repos
++   From chart repo
     ```
     helm repo add robo-helm https://robomir.github.io/helm-chart/
     helm install my-emqx robo-helm/emqx-broker
@@ -46,11 +46,11 @@ The following table lists the configurable parameters of the emqx chart and thei
 | `persistence.existingClaim` | EMQ X data Persistent Volume existing claim name, evaluated as a template | "" |
 | `persistence.accessMode` | PVC Access Mode for emqx volume | ReadWriteOnce |
 | `persistence.size` | PVC Storage Request for emqx volume | 20Mi |
-| `resources` | CPU/Memory resource requests 500m CPU; 500Mi RAM / limits 1 CPU ; 1G RAM | enabled: `true` |
-| `nodeSelector` | Node labels for pod assignment | `beta.kubernetes.io/os: linux` |
-| `tolerations` | Toleration labels for pod assignment | `[]` |
-| `affinity` | Map of node/pod affinities | `{}` |
-| `service.type`  | emqx cluster service type. | LoadBalance |
+| `resources` | CPU/Memory resource requests/limits | {} |
+| `nodeSelector` | node labels for pod assignment | `beta.kubernetes.io/os: linux` |
+| `tolerations` | toleration labels for pod assignment | `[]` |
+| `affinity` | map of node/pod affinities | `{}` |
+| `service.type`  | emqx cluster service type. | ClusterIP |
 | `ingress.enabled` | ingress configuration | enabled: `true` |
 | `ingress.domainname` | release name is appended to ingress domainname to form the hostname for the ingress | `exmp-env.example.com` |
 | `ingress.path` | ingress path| `/` |
@@ -59,5 +59,4 @@ The following table lists the configurable parameters of the emqx chart and thei
 | `emqxConfig` | emqx configuration item, see the [documentation](https://github.com/emqx/emqx-docker#emq-x-configuration) | enabled: `true` |
 | `emqxAclConfig` | acl configuration item, see the [documentation](https://docs.emqx.io/tutorial/v4/en/security/acl.html)| enabled: `true` |
 | `emqxAuthConfig` | auth plugin configuration item, see the [documentation](https://github.com/emqx/emqx-auth-username) | enabled: `true` |
-| `emqxStatsdConfig` | statsd plugin configuration item, see the [documentation](https://github.com/emqx/emqx-statsd) | enabled: `true` |
-| `emqxPluginConfig` | plugin configuration item, see the [documentation](https://docs.emqx.io/tutorial/v4/en/config/plugins.html) | enabled: `true` |
+| `configReloader` | If you would like for a daemon to watch if some change happens in "acl.conf" and "emqx_auth_username.conf". Once there are changes the daemon will perform a rolling upgrade on the Statefulset | enabled: `true` |

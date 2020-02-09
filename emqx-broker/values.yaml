@@ -5,7 +5,7 @@
 ## It is recommended to have odd number of nodes in a cluster, otherwise the emqx cluster cannot be automatically healed in case of net-split.
 replicaCount: 3
 image:
-  repository: emqx/emqx
+  repository: sbtech-docker.artifactory.sbtech.com/emqx/emqx:v4.0.1
   pullPolicy: IfNotPresent
 
 ## A PersistentVolume (PV) is a piece of storage in the cluster that has been provisioned by an administrator or dynamically provisioned using Storage Classes. It is a resource in the cluster just like a node is a cluster resource. PVs are volume plugins like Volumes, but have a lifecycle independent of any individual Pod that uses the PV. This API object captures the details of the implementation of the storage, be that NFS, iSCSI, or a cloud-provider-specific storage system.
@@ -19,7 +19,11 @@ persistence:
   ## Existing PersistentVolumeClaims
   ## The value is evaluated as a template
   ## So, for example, the name can depend on .Release or .Chart
-  # existingClaim: ""
+  ##existingClaim: "emqx-broker-data"
+
+## If you would like for a daemon to watch if some change happens in "acl.conf" and "emqx_auth_username.conf". Once there are changes the daemon will perform a rolling upgrade on the Statefulset
+configReloader:
+  enabled: true
 
 ## When you specify a Pod, you can optionally specify how much CPU and memory (RAM) each Container needs, if you don't specify anything here you'll be assigned some unknown default value
 resources:
@@ -44,14 +48,26 @@ emqxConfig:
   # EMQX_CLUSTER__K8S__SUFFIX: "pod.cluster.local"
   #Services DNS sufix:
   EMQX_CLUSTER__K8S__SUFFIX: "svc.cluster.local"
-  #EMQ X node name:
+  # EMQX node name:
   EMQX_CLUSTER__K8S__APP_NAME: emqx
+  # EMQX Plugins
+  EMQX_LOADED_PLUGINS: "emqx_management | emqx_recon | emqx_retainer | emqx_dashboard | emqx_rule_engine | emqx_auth_username"
   #EMQX Dashboard port
   ##EMQX_DASHBOARD__LISTENER__HTTP: "80"
+  ##-- Defaults --
+  ##EMQX_NAME: emqx
+  ##EMQX_LISTENER__TCP__EXTERNAL: 1883
+  ##EMQX_LISTENER__SSL__EXTERNAL: 8883
+  ##EMQX_MANAGEMENT__LISTENER__HTTP: 8081
+  ##EMQX_LISTENER__WS__EXTERNAL: 8083
+  ##EMQX_LISTENER__WSS__EXTERNAL: 8084
+  ##EMQX_DASHBOARD__LISTENER__HTTP: 18083
+  ##EMQX_CLUSTER__K8S__SERVICE_NAME: emqx-broker
+  ##EMQX_CLUSTER__K8S__NAMESPACE: my-namespace
 
-## EMQX Enterprise Edition requires a Secret containing the licensed content. you can add the licence to the blob bellow
+##
 ##emqxLicneseSecretName: |-
-##  test test test
+##  testtesttest
 
 ## If you want to manipulate the ACLs you can make changes in the blob bellow
 emqxAclConfig: |-
@@ -76,15 +92,15 @@ emqxAclConfig: |-
   %%{allow, {user, "dashboard"}, subscribe, ["$SYS/#"]}.
   %%{allow, {user, "feng@emqtt.io"}, subscribe, ["$SYS/#"]}.
 
-  %% Allow user 's879atfg' to publish in ANY topic
-  {allow, {user, "s879atfg"}, publish, ["#"]}.
+  %% Allow user 'sbtech' to publish in ANY topic
+  {allow, {user, "sbtech"}, publish, ["#"]}.
 
   %% Allow local users to publich and subscribe to "$SYS/#" and any other topic
   %%{allow, {ipaddr, "127.0.0.1"}, pubsub, ["$SYS/#", "#"]}.
 
   %% Allow specific IPs to publich and subscribe to "$SYS/#" and "#" topics
-  %%{allow, {ipaddr, "172.16.96.7"}, pubsub, ["$SYS/#" {eq, "#"}]}.
-  %%{allow, {ipaddr, "172.16.66.6"}, pubsub, ["$SYS/#" {eq, "#"}]}.
+  %%{allow, {ipaddr, "10.9.96.7"}, pubsub, ["$SYS/#" {eq, "#"}]}.
+  %%{allow, {ipaddr, "10.44.66.6"}, pubsub, ["$SYS/#" {eq, "#"}]}.
 
   %% Allow everyone to subscribe to any topic
   {allow, all, subscribe, ["#"]}.
@@ -105,64 +121,19 @@ emqxAuthConfig: |-
   ##--------------------------------------------------------------------
 
   ## Examples:
-  auth.user.1.username = s879atfg
+  auth.user.1.username = sbtech
   auth.user.1.password = s4do7ihfoa
   #auth.user.2.username = feng@emqtt.io
   #auth.user.2.password = public
   #auth.user.3.username = name~!@#$%^&*()_+
   #auth.user.3.password = pwsswd~!@#$%^&*()_+
-  #auth.user.4.username = username
-  #auth.user.4.password = abv123
+  auth.user.4.username = dashboard
+  auth.user.4.password = abv123
 
   ## Password hash.
   ##
   ## Value: plain | md5 | sha | sha256
   auth.user.password_hash = sha256
-
-## In order to manage statsd plugin config in EMQX you can make changes to the blob bellow - !!!THE PLUGIN IS MISSING!!!
-##emqxStatsdConfig: |-
-##  ##--------------------------------------------------------------------
-##  ## Statsd for EMQ X
-##  ##--------------------------------------------------------------------
-##  ## File Defaults
-##  statsd.push.gateway.server = http://127.0.0.1:9091
-##
-##  statsd.interval = 15000
-##
-##  prometheus.collector.1 = emqx_statsd
-
-## In order to manage plugins startup in EMQX you can make changes to the blob bellow
-emqxPluginConfig: |-
-  {emqx_recon,true}.
-  {emqx_retainer,true}.
-  {emqx_dashboard,true}.
-  {emqx_management,true}.
-  {emqx_rule_engine,true}.
-  {emqx_auth_username,true}.
-  {emqx_delayed_publish,false}.
-  {emqx_plugin_template,false}.
-  {emqx_auth_clientid,false}.
-  {emqx_bridge_mqtt,false}.
-  {emqx_rule_engine,false}.
-  {emqx_bridge_mqtt,false}.
-  {emqx_auth_mongo,false}.
-  {emqx_auth_mysql,false}.
-  {emqx_auth_pgsql,false}.
-  {emqx_auth_redis,false}.
-  {emqx_auth_ldap,false}.
-  {emqx_auth_http,false}.
-  {emqx_auth_jwt,false}.
-  {emqx_psk_file,false}.
-  {emqx_web_hook,false}.
-  {emqx_lua_hook,false}.
-  {emqx_retainer,false}.
-  {emqx_reloader,false}.
-  {emqx_statsd,false}.
-  {emqx_lwm2m,false}.
-  {emqx_stomp,false}.
-  {emqx_recon,false}.
-  {emqx_coap,false}.
-  {emqx_sn,false}.
 
 ## You can choose between two Service types - ClusterIP ; LoadBalancer (Internal)
 service:

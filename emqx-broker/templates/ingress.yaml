@@ -9,27 +9,24 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}-instance
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   annotations:
-    {{- if .Values.ingress.certManager }}
-    kubernetes.io/tls-acme: "true"
-    {{- end }}
     {{- range $key, $value := .Values.ingress.annotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
   rules:
-  {{- if .Values.ingress.domainname }}
-  - host: {{ printf "%s.%s" .Release.Name .Values.ingress.domainname }}
-    http:
-      paths:
-      - path: /
-        backend:
-        {{- if eq .Values.service.type "LoadBalancer" }}
-          serviceName:  {{ .Release.Name }}-dashboard
-        {{- else}}
-          serviceName:  {{ .Release.Name }}
-        {{- end}}
-          servicePort: {{ .Values.emqxConfig.EMQX_DASHBOARD__LISTENER__HTTP | default 18083 }}
-  {{- end }}
+    {{- if .Values.ingress.domainname }}
+    - host: {{ printf "%s.%s" .Release.Name .Values.ingress.domainname }}
+      http:
+        paths:
+          - path: /
+            backend:
+            {{- if eq .Values.service.type "LoadBalancer" }}
+              serviceName: {{ .Release.Name }}-dashboard
+            {{- else}}
+              serviceName: {{ .Release.Name }}
+            {{- end}}
+              servicePort: {{ .Values.emqxConfig.EMQX_DASHBOARD__LISTENER__HTTP | default 18083 }}
+    {{- end }}
   {{- if .Values.ingress.tls }}
   tls:
 {{ toYaml .Values.ingress.tls | indent 4 }}
