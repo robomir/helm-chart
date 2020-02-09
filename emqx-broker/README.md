@@ -59,4 +59,4 @@ The following table lists the configurable parameters of the emqx chart and thei
 | `emqxConfig` | emqx configuration item, see the [documentation](https://github.com/emqx/emqx-docker#emq-x-configuration) | enabled: `true` |
 | `emqxAclConfig` | acl configuration item, see the [documentation](https://docs.emqx.io/tutorial/v4/en/security/acl.html)| enabled: `true` |
 | `emqxAuthConfig` | auth plugin configuration item, see the [documentation](https://github.com/emqx/emqx-auth-username) | enabled: `true` |
-| `configReloader` | If you would like for a daemon to watch if some change happens in "acl.conf" and "emqx_auth_username.conf". Once there are changes the daemon will perform a rolling upgrade on the Statefulset | enabled: `true` |
+| `configReloader` | If you would like for a daemon to watch if some change happens in "acl.conf" and "emqx_auth_username.conf" secrets and also emqx-broker-env configMap. Once there are changes in any of the above the daemon will perform a rolling upgrade on the Statefulset | enabled: `true` |
